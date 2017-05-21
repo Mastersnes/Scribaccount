@@ -7,11 +7,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.CodeSource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import frame.MainFrame;
 
 public class JsonUtil {
-	private static final String FILE_PATH = "../../save.json";
+	final SimpleDateFormat sf = new SimpleDateFormat("MM-yyyy");
+
+	private static final String RACINE = "";
+	private static final String FILE_PATH = "/save.json";
+	private static final String ARCHIVE_PATH = "/old/";
 	private static JsonUtil instance;
 
 	private JsonUtil() {
@@ -49,10 +55,41 @@ public class JsonUtil {
 		return json;
 	}
 
+	public String getApplicationRootDirectory() {
+		final CodeSource codeSource = MainFrame.class.getProtectionDomain().getCodeSource();
+		final File jarFile = new File(codeSource.getLocation().getPath());
+		return jarFile.getAbsolutePath() + RACINE;
+	}
+
+	public void secureSave(final String json) {
+		final String date = sf.format(new Date());
+
+		final File archiveDir = new File(getApplicationRootDirectory(), ARCHIVE_PATH);
+		if (!archiveDir.exists()) {
+			archiveDir.mkdir();
+			archiveDir.setReadable(true, false);
+			archiveDir.setExecutable(true, false);
+			archiveDir.setWritable(true, false);
+		}
+		final File archiveDateDir = new File(getApplicationRootDirectory(), ARCHIVE_PATH + date);
+		if (!archiveDateDir.exists()) {
+			archiveDateDir.mkdir();
+			archiveDir.setReadable(true, false);
+			archiveDir.setExecutable(true, false);
+			archiveDir.setWritable(true, false);
+			save(json, ARCHIVE_PATH + date + FILE_PATH);
+		}
+	}
+
 	public void save(final String json) {
+		save(json, FILE_PATH);
+	}
+
+	public void save(final String json, final String where) {
 		BufferedWriter out = null;
 		try {
-			final File data = new File(getApplicationRootDirectory(), FILE_PATH);
+			final File data;
+			data = new File(getApplicationRootDirectory(), where);
 			System.out.println("Chemin de sauvegarde : " + data.getAbsolutePath());
 			if (!data.exists()) {
 				data.createNewFile();
@@ -71,11 +108,5 @@ public class JsonUtil {
 				}
 			}
 		}
-	}
-
-	public String getApplicationRootDirectory() {
-		final CodeSource codeSource = MainFrame.class.getProtectionDomain().getCodeSource();
-		final File jarFile = new File(codeSource.getLocation().getPath());
-		return jarFile.getAbsolutePath();
 	}
 }

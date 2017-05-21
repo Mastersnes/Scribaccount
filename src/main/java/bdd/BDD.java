@@ -91,6 +91,7 @@ public class BDD {
 
 	private static boolean load() {
 		final String json = JsonUtil.getInstance().load();
+		JsonUtil.getInstance().secureSave(json);
 		instance = GSON.fromJson(json, BDD.class);
 		return instance != null;
 	}
