@@ -13,8 +13,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import model.vente.VenteTableModel;
+import model.vente.VenteGroupTableModel;
 import popup.CreateVentePopup;
 import bdd.dao.VenteDAO;
 import bdd.table.VenteGroup;
@@ -31,8 +33,9 @@ public class VentePanel extends Screen {
 	final JLabel month = new JLabel("XXX XXX");
 	final JLabel total = new JLabel("XX.XX");
 	final JTable listeVenteGroup = new JTable();
-	final VenteTableModel venteModel = new VenteTableModel(this);
+	final VenteGroupTableModel venteModel = new VenteGroupTableModel(this);
 	private Date currentDate;
+    private final VentePopup ventePopup = new VentePopup(this);
 
 	public VentePanel() {
 		setLayout(new GridBagLayout());
@@ -103,6 +106,15 @@ public class VentePanel extends Screen {
 
 	private JScrollPane createListeVente() {
 		final JScrollPane scroll = new JScrollPane(this.listeVenteGroup);
+        this.listeVenteGroup.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(final ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && listeVenteGroup.getSelectedRow() != -1) {
+                    ventePopup.show(venteModel.getGroupAt(listeVenteGroup.getSelectedRow()));
+                }
+            }
+        });
 		return scroll;
 	}
 
@@ -137,4 +149,8 @@ public class VentePanel extends Screen {
 		final BigDecimal total = venteModel.calculTotal();
 		this.total.setText(String.valueOf(total));
 	}
+
+    public void remove(final VenteGroup venteGroup) {
+        venteModel.remove(venteGroup);
+    }
 }

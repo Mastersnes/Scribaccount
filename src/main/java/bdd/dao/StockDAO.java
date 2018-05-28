@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import model.bean.Stock;
-import model.vente.VenteTableModel;
+import model.vente.VenteGroupTableModel;
 import bdd.BDD;
 import bdd.table.Achat;
 import bdd.table.VenteGroup;
@@ -45,7 +45,7 @@ public class StockDAO {
 		for (final Entry<String, Map<String, VenteGroup>> entry : ventesParMois.entrySet()) {
 			for (final VenteGroup venteGroupe : entry.getValue().values()) {
 				if (venteGroupe.getIdLivre().equals(idLivre) && "-1".equals(venteGroupe.getIdPresta())) {
-					final BigDecimal total = VenteTableModel.calculTotalGroup(venteGroupe);
+					final BigDecimal total = VenteGroupTableModel.calculTotalGroup(venteGroupe);
 					final Stock stock = Stock.create(venteGroupe.getIdLivre(), Phrases.VENTE_LIBRE, entry.getKey(),
 							venteGroupe.getListVente().size(), total);
 					final List<Stock> perte = stocks.get(TypeAchat.PERTE_STOCK);
