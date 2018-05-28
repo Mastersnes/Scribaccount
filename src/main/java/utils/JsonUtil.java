@@ -15,7 +15,7 @@ import frame.MainFrame;
 public class JsonUtil {
 	final SimpleDateFormat sf = new SimpleDateFormat("MM-yyyy");
 
-	private static final String RACINE = "";
+    private static final String RACINE = "/..";
 	private static final String FILE_PATH = "/save.json";
 	private static final String ARCHIVE_PATH = "/old/";
 	private static JsonUtil instance;
